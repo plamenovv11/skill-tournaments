@@ -1,0 +1,539 @@
+{
+    "info": {
+        "name": "Skill Tournaments API",
+        "_postman_id": "skill-tournaments-v2",
+        "description": "Complete API collection for Skill Tournaments microservices system.\n\n## Authentication\nUse POST /auth/login with email and password to get a JWT token.\nThe token is automatically saved to the `authToken` variable.\n\n## Test Users\n| Email | Password | Balance |\n|-------|----------|--------|\n| alice@example.com | password1 | $1000 |\n| bob@example.com | password2 | $500 |\n| charlie@example.com | password3 | $250 |\n| diana@example.com | password4 | $2000 |\n| eve@example.com | password5 | $50 |",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "authToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "tournamentId",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login (Alice - password1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200 || pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.accessToken) {",
+                                    "        pm.collectionVariables.set('authToken', jsonData.accessToken);",
+                                    "        console.log('Token saved to authToken');",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"password1\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Authenticate with email and password. Returns JWT token and user info."
+                    }
+                },
+                {
+                    "name": "Login (Bob - password2)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200 || pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.accessToken) {",
+                                    "        pm.collectionVariables.set('authToken', jsonData.accessToken);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"bob@example.com\",\n  \"password\": \"password2\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login - Invalid Credentials",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Should return 401 Unauthorized"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Tournaments",
+            "item": [
+                {
+                    "name": "Create Tournament",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200 || pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.id) {",
+                                    "        pm.collectionVariables.set('tournamentId', jsonData.data.id);",
+                                    "        console.log('Tournament ID saved: ' + jsonData.data.id);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"gameType\": \"chess\",\n  \"tournamentType\": \"single-elimination\",\n  \"entryFee\": 100\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments"
+                            ]
+                        },
+                        "description": "Create a new tournament. The tournament ID is auto-saved for use in subsequent requests."
+                    }
+                },
+                {
+                    "name": "List All Tournaments",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments"
+                            ]
+                        },
+                        "description": "List all tournaments. Supports optional query filters: gameType, tournamentType, status"
+                    }
+                },
+                {
+                    "name": "List Tournaments (Filtered)",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments?gameType=chess&status=OPEN",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "gameType",
+                                    "value": "chess"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "OPEN"
+                                }
+                            ]
+                        },
+                        "description": "List tournaments filtered by game type and status"
+                    }
+                },
+                {
+                    "name": "Get Tournament by ID",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/{{tournamentId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "{{tournamentId}}"
+                            ]
+                        },
+                        "description": "Get details of a specific tournament by ID"
+                    }
+                },
+                {
+                    "name": "Join Tournament (with playerId)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"playerId\": \"player-1\",\n  \"tournamentId\": \"{{tournamentId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/join",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "join"
+                            ]
+                        },
+                        "description": "Join an existing tournament by ID. Provide playerId in body or use JWT auth."
+                    }
+                },
+                {
+                    "name": "Join Tournament (with JWT)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tournamentId\": \"{{tournamentId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/join",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "join"
+                            ]
+                        },
+                        "description": "Join tournament using JWT auth (playerId extracted from token)"
+                    }
+                },
+                {
+                    "name": "Join Non-Existent Tournament",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"playerId\": \"player-1\",\n  \"tournamentId\": \"non-existent-id\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/join",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "join"
+                            ]
+                        },
+                        "description": "Should return error - tournament not found"
+                    }
+                },
+                {
+                    "name": "My Tournaments (with playerId)",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/my-tournaments?playerId=player-1",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "my-tournaments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "playerId",
+                                    "value": "player-1"
+                                }
+                            ]
+                        },
+                        "description": "Get all tournaments for a specific player"
+                    }
+                },
+                {
+                    "name": "My Tournaments (with JWT)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/my-tournaments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "my-tournaments"
+                            ]
+                        },
+                        "description": "Get my tournaments using JWT auth"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Full Workflow",
+            "item": [
+                {
+                    "name": "1. Login as Alice",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200 || pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.accessToken) {",
+                                    "        pm.collectionVariables.set('authToken', jsonData.accessToken);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"password1\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Create Tournament",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200 || pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.data && jsonData.data.id) {",
+                                    "        pm.collectionVariables.set('tournamentId', jsonData.data.id);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"gameType\": \"poker\",\n  \"tournamentType\": \"round-robin\",\n  \"entryFee\": 50\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Join Tournament (JWT)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"tournamentId\": \"{{tournamentId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/join",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "join"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "4. View Tournament Details",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/{{tournamentId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "{{tournamentId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "5. My Tournaments (JWT)",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/tournaments/my-tournaments",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "tournaments",
+                                "my-tournaments"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
