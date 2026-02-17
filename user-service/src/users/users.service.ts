@@ -3,11 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { UsersRepository } from './users.repository';
 import { User } from './models/user.model';
 
-interface AuthUserResponse {
-    valid: boolean;
-    user?: User; error?: string
-};
-
 @Injectable()
 export class UsersService {
     private readonly logger = new Logger(UsersService.name);
@@ -27,7 +22,7 @@ export class UsersService {
         return userWithoutPassword as User;
     }
 
-    async authenticateUser(email: string, password: string): Promise<AuthUserResponse> {
+    async authenticateUser(email: string, password: string): Promise<{ valid: boolean; user?: User; error?: string }> {
         this.logger.log(`Authenticating user: ${email}`);
         const user = this.usersRepository.findByEmail(email);
 
@@ -45,7 +40,7 @@ export class UsersService {
         return { valid: true, user: userWithoutPassword as User };
     }
 
-    validateUserBalance(userId: string, requiredAmount: number): AuthUserResponse {
+    validateUserBalance(userId: string, requiredAmount: number): { valid: boolean; user?: User; error?: string } {
         const user = this.usersRepository.findById(userId);
 
         if (!user) {
